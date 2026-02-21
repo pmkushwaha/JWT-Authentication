@@ -119,7 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# for simple JWT 
+# for user JWT Access token authentication  
 REST_FRAMEWORK = {
  
     'DEFAULT_AUTHENTICATION_CLASSES': (
