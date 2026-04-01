@@ -1,22 +1,18 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import StreamPlatform ,WatchList
 
-class UserSerializer(serializers.ModelSerializer):
-    # password2= serializers.CharField(read_only=True)
+class WatchListSerialiser(serializers.ModelSerializer):
     class Meta:
-        model=User
-        fields=['username','email','password']
+        model=WatchList
+        fields="__all__"
 
+   
 
-    # def validate(self,data):
-    #     if data['password']!=data['password2']:
-    #         raise serializers.ValidationError("password must match")
-    #     return data
+class StreamPlatformSerialiser(serializers.ModelSerializer):
+    watchlist=WatchListSerialiser( many=True,read_only=True)
+    # watchlist=serializers.StringRelatedField(many=True) //this will give you only the title of the movies
+    class Meta:
+        model=StreamPlatform
+        fields="__all__"  
     
-    def create(self, validated_data):
-        user=User.objects.create_user(
-            username = validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-        )
-        return user
+    
