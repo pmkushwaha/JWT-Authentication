@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .serializers import StreamPlatformSerialiser,WatchListSerialiser
-from .models import StreamPlatform, WatchList
+from .serializers import StreamPlatformSerialiser,WatchListSerialiser ,ReviewSerialiser
+from .models import StreamPlatform, WatchList ,Review
 from rest_framework.views import APIView
 from rest_framework.response import  Response
 from rest_framework import status
@@ -10,6 +10,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 
+# class ReviewAV(APIView):
+#     def get(self,request,pk):
+#         rating=Review.objects.all(pk=pk)
+#         serialiser=ReviewSerialiser(many=True,pk=request.pk)
+#         return Response (serialiser.data,
+#                              status=status.HTTP_200_OK)
 class WatchListAV(APIView):
 
     def get(self,request):
