@@ -4,7 +4,7 @@ from .models import StreamPlatform ,WatchList ,Review
 
 class ReviewSerialiser(serializers.ModelSerializer):
     class Meta :
-        models= Review
+        model= Review
         fields="__all__"
 
 class WatchListSerialiser(serializers.ModelSerializer):
@@ -19,6 +19,6 @@ class StreamPlatformSerialiser(serializers.ModelSerializer):
     # watchlist=serializers.StringRelatedField(many=True) //this will give you only the title of the movies
     class Meta:
         model=StreamPlatform
-        fields="__all_"
+        fields="__all__"
     
     

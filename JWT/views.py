@@ -16,6 +16,28 @@ from rest_framework.permissions import IsAuthenticated
 #         serialiser=ReviewSerialiser(many=True,pk=request.pk)
 #         return Response (serialiser.data,
 #                              status=status.HTTP_200_OK)
+
+# created a view using mixins and generic view
+
+from rest_framework import mixins
+from rest_framework import generics
+
+class ReviewDetails(generics.GenericAPIView, mixins.ListModelMixin):
+    queryset = Review.objects.all()
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+class ReviewList( mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Review.objects.all()
+    serializer_class=ReviewSerialiser
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
 class WatchListAV(APIView):
 
     def get(self,request):
@@ -42,12 +64,16 @@ class StreamPlatformAV(APIView):
         SPl=StreamPlatform.objects.all()
         serialiser=StreamPlatformSerialiser(SPl ,many=True)
         return Response(serialiser.data)
-
+    
+    def get(self,request,pk):
+        SPl=StreamPlatform.objects.filter(pk=pk)
+        serialiser=StreamPlatformSerialiser(SPl, many=True)
+        return Response(serialiser.data)
 
     def post(self,request):
         serializer=StreamPlatformSerialiser(data=request.data)
         if serializer.is_valid():
-            StreamPlatform=serializer.save()
+            serializer.save()
             return Response (serializer.data,
                              status=status.HTTP_200_OK)
         else:
