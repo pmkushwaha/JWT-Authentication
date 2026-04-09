@@ -10,34 +10,54 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 
-# class ReviewAV(APIView):
+# from rest_framework import mixins
+from rest_framework import generics
+
+
+# view using generic view
+class CreateReview(generics.CreateAPIView):
+    serializer_class=ReviewSerialiser
+    def perform_create(self, serializer):
+        pk=self.kwargs.get('pk')  #getting requested moview id
+        movie=Review.objects.get(pk=pk)  # gettinG moview name 
+        serializer.save(WatchList=movie)
+
+class ReviewList(generics.ListCreateAPIView):
+    # queryset=Review.objects.all()
+    serializer_class=ReviewSerialiser
+    def get_queryset (self):
+        pk=self.kwargs['pk']
+        return Review.objects.filter(watchList=pk)
+       
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Review.objects.all()
+    serializer_class=ReviewSerialiser
+
+# created a view using mixins  
+# class ReviewDetails(generics.GenericAPIView, mixins.ListModelMixin):
+#     queryset = Review.objects.all()
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+    
+# class ReviewList( mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class=ReviewSerialiser
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+    
+
+ # class ReviewAV(APIView):
 #     def get(self,request,pk):
 #         rating=Review.objects.all(pk=pk)
 #         serialiser=ReviewSerialiser(many=True,pk=request.pk)
 #         return Response (serialiser.data,
 #                              status=status.HTTP_200_OK)
 
-# created a view using mixins and generic view
-
-from rest_framework import mixins
-from rest_framework import generics
-
-class ReviewDetails(generics.GenericAPIView, mixins.ListModelMixin):
-    queryset = Review.objects.all()
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-    
-class ReviewList( mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Review.objects.all()
-    serializer_class=ReviewSerialiser
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    
-
+# APIView
 class WatchListAV(APIView):
 
     def get(self,request):
@@ -58,17 +78,28 @@ class WatchListAV(APIView):
 
             )
         
+class WatchDetails(APIView):
+    def get(slf,request,pk):
+        data=WatchList.objects.filter(pk=pk)
+        serialised=WatchListSerialiser(data,many=True)
+        return Response(serialised.data, status=status.HTTP_200_OK)
+    
+    def patch(self , request,pk ):
+        serialised=WatchListSerialiser(pk=pk)
+        if serialised.is_valid():
+            serialised.save()
+            return Response( serialised.data,sestatus=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class StreamPlatformAV(APIView):
     def get(self,request):
         SPl=StreamPlatform.objects.all()
         serialiser=StreamPlatformSerialiser(SPl ,many=True)
         return Response(serialiser.data)
-    
-    def get(self,request,pk):
-        SPl=StreamPlatform.objects.filter(pk=pk)
-        serialiser=StreamPlatformSerialiser(SPl, many=True)
-        return Response(serialiser.data)
+  
 
     def post(self,request):
         serializer=StreamPlatformSerialiser(data=request.data)
@@ -80,6 +111,12 @@ class StreamPlatformAV(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST
 
             )
+
+class  StreamDetail(APIView):  
+    def get(self,request,pk):
+        SPl=StreamPlatform.objects.filter(pk=pk)
+        serialiser=StreamPlatformSerialiser(SPl, many=True)
+        return Response(serialiser.data)
 
 # class LoginUser(APIView):
 #     def post(self,request):

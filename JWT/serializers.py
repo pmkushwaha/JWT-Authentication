@@ -5,12 +5,14 @@ from .models import StreamPlatform ,WatchList ,Review
 class ReviewSerialiser(serializers.ModelSerializer):
     class Meta :
         model= Review
-        fields="__all__"
+        exclude=('watchList',)
+        # fields="__all__"
 
 class WatchListSerialiser(serializers.ModelSerializer):
     review=ReviewSerialiser(many=True,read_only=True)
     class Meta:
         model=WatchList
+ 
         fields="__all__"
        
 
